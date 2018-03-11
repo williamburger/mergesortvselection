@@ -11,20 +11,20 @@ def run_and_plot(test_cases):
     initial_inversions = []
     merge_inversions_ratios = []
     select_inversions_ratios = []
+    diff_inversions=[]
     for i in test_cases:
         B = []
         mergearray = []
         selectarray = []
+        
         for j in range(0,i):
             B.append(random.randint(0,1000))
         [numinversions, trash] = inversions.count_inversions(B)
         initial_inversions.append(numinversions)
-        try:
-            [x, y, mergearray, selectarray] = runtime.test_runtime(B)
-        except:
-            print("BOOOO")
+        [x, y, mergearray, selectarray] = runtime.test_runtime(B)
         merge_inversions_ratios.append(inversions.count_inversions(mergearray)[0]/numinversions)
         select_inversions_ratios.append(float(inversions.count_inversions(selectarray)[0])/numinversions)
+        diff_inversions.append(numinversions - select_inversions_ratios[-1])
         merge_times.append(x)
         selection_times.append(y)
         times.append(i)
@@ -76,7 +76,14 @@ def run_and_plot(test_cases):
         y = select_inversions_ratios,
         mode = 'markers',
         name = 'inversions number versus run time'
-    ) 
+    )
+    trace5 = go.Scatter(
+        x = diff_inversions,
+        y = selection_times,
+        mode = 'markers',
+        name = 'differences'
+    )
+    py.offline.plot([trace5],filename='differences.html') 
     data = [trace0, trace1]
     fig = go.Figure(data=data,layout=layout)
     py.offline.plot(fig,filename='selectionvsmerge.html')
